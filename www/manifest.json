@@ -1,0 +1,17 @@
+{
+  "name": "Slingshot Dummy",
+  "short_name": "Slingshot",
+  "description": "One-finger pull-back pixel pinball & boss-slam arcade game by JakePlay / JakeTeam LLC",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0c0e18",
+  "theme_color": "#0c0e18",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

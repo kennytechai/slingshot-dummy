@@ -1,0 +1,8 @@
+{
+  "appId": "com.jaketeam.slingshotdummy",
+  "appName": "Slingshot Dummy",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Slingshot Dummy — JakePlay Arcade</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Slingshot Dummy" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#0c0e18" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon.svg" />
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
+  <style>.hidden{display:none!important;}</style>
+  <link rel="stylesheet" href="style.css?v=1" />
+</head>
+<body>
+  <div class="game-viewport">
+    <!-- Top Floating HUD -->
+    <header class="hud-top">
+      <div class="hud-left">
+        <div class="hud-pill arena-pill" id="hudArena">A1 · CRASH-TEST 101</div>
+        <div class="hud-sub-row">
+          <div class="hud-pill diff-pill mode-normal" id="hudDiff">⚡ NORMAL</div>
+          <div class="hud-pill" id="hudShots">SHOTS: 0/2</div>
+          <div class="hud-pill targets-pill" id="hudTargets">TARGETS: 4</div>
+          <div class="hud-pill aura-pill" id="hudAura">AURA: 0</div>
+        </div>
+      </div>
+      <div class="hud-right">
+        <div class="hud-pill timer-pill" id="hudTimer">00:00.0</div>
+        <button class="hud-icon-btn" id="btnRetryTop" title="Restart Arena (R)" aria-label="Restart">↻</button>
+        <button class="hud-icon-btn" id="btnMute" title="Toggle Sound (M)" aria-label="Sound">🔊</button>
+        <button class="hud-icon-btn" id="btnPause" title="Pause (P)" aria-label="Pause">⏸</button>
+      </div>
+    </header>
+
+    <div class="troll-toast" id="toastTicker" aria-live="polite"></div>
+
+    <!-- Centered Crisp Pixel Pinball Arena Canvas -->
+    <div class="canvas-stage">
+      <canvas id="gameCanvas" width="960" height="576"></canvas>
+    </div>
+
+    <div class="bottom-hint">DRAG ANYWHERE TO PULL BACK &amp; LAUNCH · RELEASE TO SMASH!</div>
+
+    <!-- Title Screen -->
+    <div class="modal-overlay" id="overlayTitle">
+      <div class="modal-card">
+        <div class="title-tag">JAKEPLAY.COM · GAME #02 · BY JAKETEAM LLC</div>
+        <h1 class="pixel-title">SLINGSHOT DUMMY</h1>
+        <div class="title-footnote">1-finger pull-back pinball chaos · 20 arenas · 4 bosses</div>
+
+        <div class="tier-strip">
+          <span class="tier-badge" id="accountStatusBadge">FREE GUEST · LOCAL SAVE</span>
+          <button class="tiny-link" id="btnAccount">SIGN IN / REGISTER</button>
+        </div>
+
+        <div class="diff-selector" role="radiogroup" aria-label="Choose Difficulty">
+          <button class="diff-card" data-diff="easy">
+            <div class="diff-name">🐥 EASY</div>
+            <div class="diff-troll">2-BOUNCE SIGHT</div>
+          </button>
+          <button class="diff-card active" data-diff="normal">
+            <div class="diff-name">⚡ NORMAL</div>
+            <div class="diff-troll">1-BOUNCE SIGHT</div>
+          </button>
+          <button class="diff-card" data-diff="hard">
+            <div class="diff-name">🔥 HARD</div>
+            <div class="diff-troll">EXTRA SPIKES</div>
+          </button>
+          <button class="diff-card" data-diff="ultimate">
+            <div class="diff-name">💀 ULTIMATE</div>
+            <div class="diff-troll">NO AIM SIGHT</div>
+          </button>
+        </div>
+        <div class="easy-troll-banner hidden" id="easyTrollBanner"></div>
+
+        <div class="modal-actions">
+          <button class="pixel-btn primary" id="btnStart">▶ PLAY</button>
+          <button class="pixel-btn" id="btnLevels">ARENAS (20)</button>
+        </div>
+        <div class="legal-footer">
+          <a href="https://jakeplay.com" class="legal-link">◀ JakePlay Hub</a>
+          <span>·</span>
+          <a href="https://matchstick.jakeplay.com" class="legal-link">Matchstick Tales</a>
+          <span>·</span>
+          <a href="./privacy.html" class="legal-link">Privacy Policy</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arena Select -->
+    <div class="modal-overlay hidden" id="overlayLevels">
+      <div class="modal-card">
+        <div class="modal-header">
+          <span>SELECT ARENA</span>
+          <button class="tiny-link prem-locked" id="btnUnlockAll">🔒 UNLOCK ALL (PREMIUM)</button>
+        </div>
+        <div class="world-grid" id="worldGrid"></div>
+        <div class="modal-actions">
+          <button class="pixel-btn" id="btnBackTitle">BACK</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pause -->
+    <div class="modal-overlay hidden" id="overlayPause">
+      <div class="modal-card small">
+        <div class="modal-header"><span>PAUSED</span></div>
+        <div class="modal-stats" id="pauseStats"></div>
+        <div class="modal-stack">
+          <button class="pixel-btn primary" id="btnResume">RESUME</button>
+          <button class="pixel-btn" id="btnSwitchDiff">MODE: ⚡ NORMAL</button>
+          <button class="pixel-btn" id="btnRestartArena">RESTART ARENA</button>
+          <button class="pixel-btn" id="btnOpenLevels">ARENA SELECT</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Victory -->
+    <div class="modal-overlay hidden" id="overlayVictory">
+      <div class="modal-card">
+        <div class="title-tag" id="victoryTag">ARENA CLEARED!</div>
+        <h2 class="pixel-subtitle" id="victoryTitle">CRASH-TEST 101</h2>
+        <div class="modal-stats" id="victoryStats"></div>
+        <div class="victory-quote" id="victoryQuote"></div>
+        <div class="modal-actions">
+          <button class="pixel-btn primary" id="btnNextArena">NEXT ARENA ▶</button>
+          <button class="pixel-btn" id="btnReplayArena">REPLAY</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Shared JakePlay Cloud Account Modal (COPPA 13+ & In-App Delete Account) -->
+    <div class="modal-overlay hidden" id="overlayAuth">
+      <div class="modal-card">
+        <div class="modal-header">
+          <span>JAKEPLAY CLOUD ACCOUNT</span>
+          <button class="tiny-link" id="btnCloseAuth">CLOSE</button>
+        </div>
+        <div class="auth-tabs-row">
+          <button class="tiny-link active" id="tabReg">REGISTER</button>
+          <button class="tiny-link" id="tabLog">SIGN IN</button>
+        </div>
+        <form id="gameFormReg" class="game-auth-form">
+          <div class="g-row-2">
+            <input type="text" name="firstName" required maxlength="40" pattern="[A-Za-z0-9][A-Za-z0-9 .'\-]*" placeholder="First Name" />
+            <input type="text" name="lastName" required maxlength="40" pattern="[A-Za-z0-9][A-Za-z0-9 .'\-]*" placeholder="Last Name" />
+          </div>
+          <div class="g-row-2">
+            <input type="text" name="handle" required minlength="3" maxlength="20" pattern="[A-Za-z0-9_]+" placeholder="Handle" />
+            <input type="number" name="age" required min="13" max="120" placeholder="Age (13+)" />
+          </div>
+          <input type="email" name="email" required maxlength="120" placeholder="Email Address" />
+          <input type="password" name="password" required minlength="6" maxlength="128" placeholder="Password (6+ chars)" />
+          <div class="coppa-hint">Ages 13+ only. Players under 13 can play anonymously in Free Guest Mode.</div>
+          <div class="auth-err-msg" id="gRegErr"></div>
+          <button type="submit" class="pixel-btn primary">CREATE FREE ACCOUNT</button>
+        </form>
+        <form id="gameFormLog" class="game-auth-form hidden">
+          <input type="text" name="emailOrHandle" required placeholder="Email or Handle" />
+          <input type="password" name="password" required placeholder="Password" />
+          <div class="auth-err-msg" id="gLogErr"></div>
+          <button type="submit" class="pixel-btn primary">SIGN IN</button>
+        </form>
+        <div id="signedInBox" class="hidden">
+          <div class="modal-stats" id="signedInInfo"></div>
+          <div class="acct-actions-row">
+            <button class="pixel-btn" id="btnGameLogout">SIGN OUT</button>
+            <button class="tiny-link danger-link" id="btnShowDeleteAcct">DELETE ACCOUNT</button>
+          </div>
+          <form id="gameFormDelete" class="game-auth-form delete-acct-box hidden">
+            <div class="delete-warn">Permanently deletes your JakePlay account, cloud stats &amp; scores.</div>
+            <input type="password" name="password" required placeholder="Confirm Password to Delete" />
+            <div class="auth-err-msg" id="gDelErr"></div>
+            <div class="acct-actions-row">
+              <button type="submit" class="pixel-btn danger-btn">CONFIRM DELETE</button>
+              <button type="button" class="tiny-link" id="btnCancelDeleteAcct">CANCEL</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/cloud.js?v=1"></script>
+  <script src="js/audio.js?v=1"></script>
+  <script src="js/sprites.js?v=1"></script>
+  <script src="js/levels.js?v=1"></script>
+  <script src="js/engine.js?v=1"></script>
+  <script src="js/sw-register.js?v=1"></script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" shape-rendering="crispEdges">
+  <rect width="64" height="64" rx="12" fill="#14182a"/>
+  <rect x="4" y="4" width="56" height="56" rx="9" fill="#1e243d" stroke="#ffd166" stroke-width="3"/>
+  <!-- Crash-Test Rubber Dummy Head -->
+  <rect x="16" y="14" width="32" height="32" fill="#111118"/>
+  <rect x="18" y="16" width="28" height="28" fill="#ffd166"/>
+  <!-- Crash-test quadrant stripes -->
+  <rect x="18" y="16" width="14" height="10" fill="#181a24"/>
+  <rect x="32" y="16" width="14" height="10" fill="#ff9f1c"/>
+  <!-- Giant googly eyes -->
+  <rect x="20" y="26" width="10" height="10" fill="#111118"/>
+  <rect x="21" y="27" width="8" height="8" fill="#ffffff"/>
+  <rect x="25" y="29" width="3" height="4" fill="#111118"/>
+  <rect x="34" y="28" width="9" height="9" fill="#111118"/>
+  <rect x="35" y="29" width="7" height="7" fill="#ffffff"/>
+  <rect x="38" y="31" width="3" height="3" fill="#111118"/>
+  <!-- Goofy smile & rubber band ears -->
+  <rect x="25" y="39" width="14" height="3" fill="#111118"/>
+  <rect x="32" y="41" width="5" height="4" fill="#ff6b9d"/>
+  <!-- Slingshot stretch sparks -->
+  <rect x="8" y="46" width="10" height="4" fill="#ff595e"/>
+  <rect x="46" y="46" width="10" height="4" fill="#52e069"/>
+  <rect x="24" y="50" width="16" height="4" fill="#74c0fc"/>
+</svg>

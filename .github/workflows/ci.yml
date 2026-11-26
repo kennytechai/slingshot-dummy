@@ -1,0 +1,25 @@
+name: CI Tests & Security Checks
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Syntax Check JS
+        run: |
+          for f in www/js/*.js www/sw.js server.js; do
+            node --check "$f"
+          done
+      - name: Run Test Suite
+        run: node --test tests/*.test.mjs
