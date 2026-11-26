@@ -272,6 +272,7 @@ html, body {
   color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 13px;
 }
 .coppa-hint { font-size: 10px; color: #9aa6c4; line-height: 1.4; }
+.portal-link-btn { text-decoration: none; display: inline-block; }
 .auth-err-msg { min-height: 14px; font-size: 11px; color: #ff6b6b; }
 .acct-actions-row { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
 .delete-acct-box { margin-top: 12px; padding-top: 10px; border-top: 1px dashed rgba(255, 107, 107, 0.45); }

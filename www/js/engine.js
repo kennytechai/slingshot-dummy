@@ -599,40 +599,42 @@
       if (!cloud) return;
       const badge = document.getElementById('accountStatusBadge');
       const btnAcc = document.getElementById('btnAccount');
-      const formReg = document.getElementById('gameFormReg');
-      const formLog = document.getElementById('gameFormLog');
+      const guestPortalBox = document.getElementById('guestPortalBox');
+      const btnPortalLogin = document.getElementById('btnPortalLogin');
+      const btnPortalReg = document.getElementById('btnPortalRegister');
       const formDel = document.getElementById('gameFormDelete');
       const signedBox = document.getElementById('signedInBox');
-      const tabReg = document.getElementById('tabReg');
-      const tabLog = document.getElementById('tabLog');
-      const regErr = document.getElementById('gRegErr');
-      const logErr = document.getElementById('gLogErr');
       const delErr = document.getElementById('gDelErr');
+
+      const refreshPortalLinks = () => {
+        if (btnPortalLogin) btnPortalLogin.href = cloud.getPortalAuthUrl('login');
+        if (btnPortalReg) btnPortalReg.href = cloud.getPortalAuthUrl('register');
+      };
+      refreshPortalLinks();
 
       const updateAuthUI = (user) => {
         this._syncUnlockAllButton();
+        refreshPortalLinks();
         if (formDel) { formDel.classList.add('hidden'); formDel.reset(); }
         if (delErr) delErr.textContent = '';
         if (user) {
           badge.textContent = `@${user.handle.toUpperCase()} · ${user.tier === 'premium' ? '👑 PREMIUM' : 'CLOUD STATS ON'}`;
           btnAcc.textContent = 'ACCOUNT & STATS';
-          formReg.classList.add('hidden');
-          formLog.classList.add('hidden');
+          if (guestPortalBox) guestPortalBox.classList.add('hidden');
           signedBox.classList.remove('hidden');
           this._renderAccountStats(user);
         } else {
           badge.textContent = 'FREE GUEST · LOCAL SAVE';
-          btnAcc.textContent = 'SIGN IN / REGISTER';
+          btnAcc.textContent = 'SIGN IN ON JAKEPLAY';
           signedBox.classList.add('hidden');
-          formReg.classList.remove('hidden');
-          formLog.classList.add('hidden');
+          if (guestPortalBox) guestPortalBox.classList.remove('hidden');
         }
       };
 
       cloud.onAuthChange = async (user, reason, deletedId) => {
         if (user) {
           const cached = this._loadSaveForKey(this._userSaveKey(user.id));
-          this.save = cached || (reason === 'register' ? { ...this.save, ownerId: user.id } : this._freshSave(this.difficulty));
+          this.save = cached || this._freshSave(this.difficulty);
           this.save.ownerId = user.id;
           this.aura = this.save.aura || 0;
           this.totalDeaths = this.save.totalDeaths || 0;
@@ -656,44 +658,16 @@
       document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') this._flushCloudSave(true); });
       window.addEventListener('pagehide', () => this._flushCloudSave(true));
 
-      btnAcc.addEventListener('click', () => { this.ovAuth.classList.remove('hidden'); updateAuthUI(cloud.user); });
+      btnAcc.addEventListener('click', () => {
+        // Guests go straight to the main JakePlay portal login (auto-returns here once signed in!)
+        if (!cloud.user) {
+          window.location.href = cloud.getPortalAuthUrl('login');
+          return;
+        }
+        this.ovAuth.classList.remove('hidden');
+        updateAuthUI(cloud.user);
+      });
       document.getElementById('btnCloseAuth').addEventListener('click', () => this.ovAuth.classList.add('hidden'));
-      tabReg.addEventListener('click', () => {
-        if (cloud.user) return;
-        tabReg.classList.add('active'); tabLog.classList.remove('active');
-        formReg.classList.remove('hidden'); formLog.classList.add('hidden');
-      });
-      tabLog.addEventListener('click', () => {
-        if (cloud.user) return;
-        tabLog.classList.add('active'); tabReg.classList.remove('active');
-        formLog.classList.remove('hidden'); formReg.classList.add('hidden');
-      });
-
-      formReg.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        regErr.textContent = '';
-        const fd = new FormData(formReg);
-        try {
-          const u = await cloud.register({
-            firstName: fd.get('firstName'), lastName: fd.get('lastName'),
-            handle: fd.get('handle'), age: Number(fd.get('age')),
-            email: fd.get('email'), password: fd.get('password')
-          });
-          this.showToast(`Welcome @${u.handle}! Cloud Stats enabled!`);
-          this.ovAuth.classList.add('hidden');
-        } catch (err) { regErr.textContent = err.message; }
-      });
-
-      formLog.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        logErr.textContent = '';
-        const fd = new FormData(formLog);
-        try {
-          const u = await cloud.login(fd.get('emailOrHandle'), fd.get('password'));
-          this.showToast(`Signed in as @${u.handle}!`);
-          this.ovAuth.classList.add('hidden');
-        } catch (err) { logErr.textContent = err.message; }
-      });
 
       document.getElementById('btnGameLogout').addEventListener('click', async () => {
         this._flushCloudSave(false);

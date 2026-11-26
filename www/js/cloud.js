@@ -1,12 +1,14 @@
 /* =========================================================
-   SLINGSHOT DUMMY — JakePlay Cloud Account & Stats Client
-   Shares the exact same JakePlay account & jp_session cookie
-   at https://api.jakeplay.com (JakeTeam LLC).
+   SLINGSHOT DUMMY — JakePlay Cloud Session & Stats Client
+   Sign-in & registration happen on the main JakePlay portal
+   (https://jakeplay.com); the shared .jakeplay.com session
+   cookie authenticates automatically across all games!
    Unregistered guests stay 100% local in browser storage.
    ========================================================= */
 
 (function () {
   const API_BASE = 'https://api.jakeplay.com';
+  const PORTAL_URL = 'https://jakeplay.com';
   const TOKEN_KEY = 'jakeplay_auth_token';
   const GAME_ID = 'slingshot-dummy';
 
@@ -21,13 +23,23 @@
       return Boolean(this.user && this.user.tier === 'premium');
     }
 
+    getPortalAuthUrl(mode = 'login') {
+      const m = mode === 'register' ? 'register' : 'login';
+      const ret = encodeURIComponent(window.location.href);
+      return `${PORTAL_URL}/?auth=${m}&return=${ret}`;
+    }
+
     async _fetch(path, opts = {}) {
       const token = localStorage.getItem(TOKEN_KEY);
       const headers = { 'Content-Type': 'application/json', ...(opts.headers || {}) };
       if (token) headers['Authorization'] = 'Bearer ' + token;
       const res = await fetch(API_BASE + path, { ...opts, headers, credentials: 'include' });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || 'Request failed');
+      if (!res.ok) {
+        const err = new Error(data.error || 'Request failed');
+        err.status = res.status;
+        throw err;
+      }
       return data;
     }
 
@@ -41,30 +53,6 @@
         this.tier = 'free';
       }
       if (this.onAuthChange) this.onAuthChange(this.user, 'init');
-      return this.user;
-    }
-
-    async register(payload) {
-      const data = await this._fetch('/api/register', {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      });
-      if (data.token) localStorage.setItem(TOKEN_KEY, data.token);
-      this.user = data.user;
-      this.tier = this.user.tier || 'registered';
-      if (this.onAuthChange) this.onAuthChange(this.user, 'register');
-      return this.user;
-    }
-
-    async login(emailOrHandle, password) {
-      const data = await this._fetch('/api/login', {
-        method: 'POST',
-        body: JSON.stringify({ emailOrHandle, password })
-      });
-      if (data.token) localStorage.setItem(TOKEN_KEY, data.token);
-      this.user = data.user;
-      this.tier = this.user.tier || 'registered';
-      if (this.onAuthChange) this.onAuthChange(this.user, 'login');
       return this.user;
     }
 

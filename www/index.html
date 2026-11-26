@@ -13,7 +13,7 @@
   <link rel="apple-touch-icon" href="icons/icon.svg" />
   <link rel="icon" type="image/svg+xml" href="icons/icon.svg" />
   <style>.hidden{display:none!important;}</style>
-  <link rel="stylesheet" href="style.css?v=1" />
+  <link rel="stylesheet" href="style.css?v=2" />
 </head>
 <body>
   <div class="game-viewport">
@@ -133,38 +133,23 @@
       </div>
     </div>
 
-    <!-- Shared JakePlay Cloud Account Modal (COPPA 13+ & In-App Delete Account) -->
+    <!-- Shared JakePlay Account & Stats Modal (Sign-In links directly to jakeplay.com portal!) -->
     <div class="modal-overlay hidden" id="overlayAuth">
       <div class="modal-card">
         <div class="modal-header">
           <span>JAKEPLAY CLOUD ACCOUNT</span>
           <button class="tiny-link" id="btnCloseAuth">CLOSE</button>
         </div>
-        <div class="auth-tabs-row">
-          <button class="tiny-link active" id="tabReg">REGISTER</button>
-          <button class="tiny-link" id="tabLog">SIGN IN</button>
+        <div id="guestPortalBox" class="game-auth-form">
+          <div class="modal-stats">
+            Sign in or register once on <b>JakePlay.com</b> — your account automatically stays signed in across <b>Matchstick Tales</b>, <b>Slingshot Dummy</b>, and every future JakePlay game!<br/>
+            <span class="coppa-hint">Accounts require age 13+. Players under 13 can play anonymously in Free Guest Mode.</span>
+          </div>
+          <div class="acct-actions-row">
+            <a class="pixel-btn primary portal-link-btn" id="btnPortalLogin" href="https://jakeplay.com/?auth=login">SIGN IN ON JAKEPLAY</a>
+            <a class="pixel-btn portal-link-btn" id="btnPortalRegister" href="https://jakeplay.com/?auth=register">REGISTER (13+)</a>
+          </div>
         </div>
-        <form id="gameFormReg" class="game-auth-form">
-          <div class="g-row-2">
-            <input type="text" name="firstName" required maxlength="40" pattern="[A-Za-z0-9][A-Za-z0-9 .'\-]*" placeholder="First Name" />
-            <input type="text" name="lastName" required maxlength="40" pattern="[A-Za-z0-9][A-Za-z0-9 .'\-]*" placeholder="Last Name" />
-          </div>
-          <div class="g-row-2">
-            <input type="text" name="handle" required minlength="3" maxlength="20" pattern="[A-Za-z0-9_]+" placeholder="Handle" />
-            <input type="number" name="age" required min="13" max="120" placeholder="Age (13+)" />
-          </div>
-          <input type="email" name="email" required maxlength="120" placeholder="Email Address" />
-          <input type="password" name="password" required minlength="6" maxlength="128" placeholder="Password (6+ chars)" />
-          <div class="coppa-hint">Ages 13+ only. Players under 13 can play anonymously in Free Guest Mode.</div>
-          <div class="auth-err-msg" id="gRegErr"></div>
-          <button type="submit" class="pixel-btn primary">CREATE FREE ACCOUNT</button>
-        </form>
-        <form id="gameFormLog" class="game-auth-form hidden">
-          <input type="text" name="emailOrHandle" required placeholder="Email or Handle" />
-          <input type="password" name="password" required placeholder="Password" />
-          <div class="auth-err-msg" id="gLogErr"></div>
-          <button type="submit" class="pixel-btn primary">SIGN IN</button>
-        </form>
         <div id="signedInBox" class="hidden">
           <div class="modal-stats" id="signedInInfo"></div>
           <div class="acct-actions-row">
@@ -172,8 +157,8 @@
             <button class="tiny-link danger-link" id="btnShowDeleteAcct">DELETE ACCOUNT</button>
           </div>
           <form id="gameFormDelete" class="game-auth-form delete-acct-box hidden">
-            <div class="delete-warn">Permanently deletes your JakePlay account, cloud stats &amp; scores.</div>
-            <input type="password" name="password" required placeholder="Confirm Password to Delete" />
+            <div class="delete-warn">Permanently deletes your JakePlay account, cloud stats &amp; scores across all games.</div>
+            <input type="password" name="password" required autocomplete="current-password" placeholder="Confirm Password to Delete" />
             <div class="auth-err-msg" id="gDelErr"></div>
             <div class="acct-actions-row">
               <button type="submit" class="pixel-btn danger-btn">CONFIRM DELETE</button>
@@ -185,11 +170,11 @@
     </div>
   </div>
 
-  <script src="js/cloud.js?v=1"></script>
-  <script src="js/audio.js?v=1"></script>
-  <script src="js/sprites.js?v=1"></script>
-  <script src="js/levels.js?v=1"></script>
-  <script src="js/engine.js?v=1"></script>
-  <script src="js/sw-register.js?v=1"></script>
+  <script src="js/cloud.js?v=2"></script>
+  <script src="js/audio.js?v=2"></script>
+  <script src="js/sprites.js?v=2"></script>
+  <script src="js/levels.js?v=2"></script>
+  <script src="js/engine.js?v=2"></script>
+  <script src="js/sw-register.js?v=2"></script>
 </body>
 </html>

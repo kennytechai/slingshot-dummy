@@ -54,7 +54,7 @@ test('security headers, strict CSP (no inline script), COPPA 13+, and privacy co
 
   const html = fs.readFileSync(path.join(WWW, 'index.html'), 'utf8');
   assert.doesNotMatch(html, /<script(?![^>]*\bsrc=)[^>]*>/i);
-  assert.match(html, /name="age"[^>]*min="13"/i);
+  assert.match(html, /https:\/\/jakeplay\.com\/\?auth=login/, 'Sign-in should link directly to main JakePlay portal');
   assert.match(html, /id="gameFormDelete"/);
 
   const privacy = fs.readFileSync(path.join(WWW, 'privacy.html'), 'utf8');
